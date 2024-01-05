@@ -16,34 +16,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // getUser(String email, String password) async {
-  //   await ref.read(authControllerProvider.notifier)
-  //       .getUser(email, password, _btnController1, context);
-  // }
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  List<dynamic> users = [];
-  Future<void> fetchUser() async {
-    print('fetchData called');
-    const url = 'https://crm-beta-api.vozlead.in/api/v2/account/login/';
-    final uri = Uri.parse(url);
-    final response = await http.get(uri);
-
-    if (response.statusCode == 200) {
-      final body = response.body;
-      final json = jsonDecode(body);
-
-      setState(() {
-        emailController.text = json['email'];
-        passwordController.text = json['password'];
-      });
-
-      print('fetch completed');
-    } else {
-      print('Failed to fetch data. Error code: ${response.statusCode}');
-      // Handle error if necessary
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,18 +26,20 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Column(
         children: [
           Container(
-            width: deviceWidth * deviceWidth,
-            height: deviceHeight * 0.4,
-            decoration: BoxDecoration(
-                color: Colors.blue,
+              width: deviceWidth * deviceWidth,
+              height: deviceHeight * 0.4,
+              decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius:
+                      BorderRadius.only(bottomRight: Radius.circular(100))),
+              child: ClipRRect(
                 borderRadius:
-                    BorderRadius.only(bottomRight: Radius.circular(100))),
-            child: Image.asset(
-              Constants.log,
-              width: deviceWidth * 0.3,
-              height: deviceHeight * 0.3,
-            ),
-          ),
+                    BorderRadius.only(bottomRight: Radius.circular(100)),
+                child: Image.asset(
+                  'assets/img/dec1.jpg',
+                  fit: BoxFit.cover,
+                ),
+              )),
           Container(
             color: Colors.white,
             width: deviceWidth * 0.9,
@@ -81,15 +57,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                   height: deviceHeight * .065,
                   decoration: BoxDecoration(
-                    color: Colors.greenAccent,
                     borderRadius: BorderRadius.circular(7),
                   ),
-                  child:
-                  // Text(
-                  //   'Email: ${emailController.text}',
-                  //   style: TextStyle(fontSize: 16),
-                  // ),
-                  Padding(
+                  child: Padding(
                     padding: EdgeInsets.only(left: deviceWidth * .028),
                     child: TextFormField(
                       controller: emailController,
@@ -99,10 +69,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontSize: deviceWidth * .035),
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                        border: InputBorder.none,
+                        border: OutlineInputBorder(),
                         focusedBorder: InputBorder.none,
                         contentPadding: EdgeInsets.zero,
-                        hintText:  'Email: ${emailController.text}',
+                        hintText: 'username',
                         hintStyle: GoogleFonts.lexend(
                             color: Color(0xff9E9E9E),
                             fontWeight: FontWeight.w500,
@@ -117,15 +87,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                   height: deviceHeight * .065,
                   decoration: BoxDecoration(
-                    color: Colors.greenAccent,
                     borderRadius: BorderRadius.circular(7),
                   ),
-                  child:
-                  // Text(
-                  //   'Password: ${passwordController.text}',
-                  //   style: TextStyle(fontSize: 16),
-                  // ),
-                  Padding(
+                  child: Padding(
                     padding: EdgeInsets.only(left: deviceWidth * .028),
                     child: TextFormField(
                       controller: passwordController,
@@ -135,10 +99,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontSize: deviceWidth * .035),
                       keyboardType: TextInputType.visiblePassword,
                       decoration: InputDecoration(
-                        border: InputBorder.none,
+                        border: OutlineInputBorder(),
                         focusedBorder: InputBorder.none,
                         contentPadding: EdgeInsets.zero,
-                        hintText:'Password: ${passwordController.text}',
+                        hintText: 'password',
                         hintStyle: GoogleFonts.lexend(
                             color: Color(0xff9E9E9E),
                             fontWeight: FontWeight.w500,
@@ -167,12 +131,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      fetchUser();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomeScreen(),
-                          ));
+                      // fetchUser();
+                      String username = emailController.text;
+                      String password = passwordController.text;
+                      login(username, password, context);
                     },
                     child: Text(
                       '             Sign In                ',
@@ -202,5 +164,35 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     ));
+  }
+}
+
+login(String username, String password, BuildContext context) async {
+  var url = 'https://crm-beta-api.vozlead.in/api/v2/account/login/';
+  var body = json.encode({"username": username, "password": password});
+
+  try {
+    var response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json', // Add this line
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      print(jsonResponse);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(),
+          ));
+    } else {
+      print('Login failed with status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error during login: $e');
   }
 }
