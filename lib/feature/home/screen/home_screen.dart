@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         leading: InkWell(
             onTap: () {
@@ -61,8 +61,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: MediaQuery.of(context).size.width * 0.2,
                   // height: MediaQuery.of(context).size.height * 0.4,
                   decoration: BoxDecoration(
-                      color: Colors.greenAccent,
-                      borderRadius: BorderRadius.circular(15)),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow:[BoxShadow(
+                        color: Colors.black,
+                        blurRadius: 6
+                      )] ),
                   child: Column(children: [
                     Row(
                       children: [
@@ -155,28 +159,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            // ListView.builder(
-            //     scrollDirection: Axis.vertical,
-            //     itemCount: users.length,
-            //     itemBuilder: (context, index) {
-            //       print(users[0]);
-            //       final user = users[index];
-            //       final options = user[''];
-            //       return Padding(
-            //         padding: const EdgeInsets.all(8.0),
-            //         child: Container(
-            //           height: deviceHeight * 0.3,
-            //           decoration: BoxDecoration(
-            //             color: Colors.greenAccent,
-            //               border: Border.all(width: 1),
-            //               borderRadius: BorderRadius.circular(10)),
-            //           child: Text(
-            //             options.toString(),
-            //             style: TextStyle(color: Colors.white),
-            //           ),
-            //         ),
-            //       );
-            //     }),
           ),
         ],
       ),
